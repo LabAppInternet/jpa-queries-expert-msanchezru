@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FgcFriendService {
@@ -27,14 +28,14 @@ public class FgcFriendService {
         User user = fcgUserService.getDomainUser(username);
 
         // TODO 20: find all the friends of a user given her username. You can solve this exercise without any sql query
-        List<Friend> friends = new ArrayList<>(); //feed the list with the friends of the user
+        List<Friend> friends = friendRepository.findAllByUserUsername(username); //feed the list with the friends of the user
         return MapperHelper.listOfAUserFriendsToUserFriendsDTO(friends);
     }
 
     public List<UserFriendsDTO> getAllUserFriends() {
         // TODO 21: find all the friends (domain) of all users. You can solve this exercise without leaving this file
         //  note that domain objects are mapped to DTOs
-        return MapperHelper.allUserFriendListToListUserFriendsDTO(new ArrayList<>()); // replace the empty list with the list of all users
+        return MapperHelper.allUserFriendListToListUserFriendsDTO(friendRepository.findAll()); // replace the empty list with the list of all users
     }
 
     public void saveFriends(UserFriendsDTO userFriendsDTO) {
@@ -44,13 +45,31 @@ public class FgcFriendService {
 
     public List<UserTopFriend> getTop3UsersWithMostFriends() {
         // TODO 22: find the top 3 users with the most friends.
-        return null;
+        return friendRepository.findTop3UsersWithMostFriends();
     }
 
     // Find all users whose friends have a certain name
     public List<FriendUserDTO> getUsersByFriend(String friendName) {
         // TODO 23: find all users whose friends have a certain name.
-        return null;
+        //return friendRepository.findUserDTOByFriend(friendName);
+        List<Friend> friends = friendRepository.findAllByIdUsername(friendName);
+        List<FriendUserDTO> friendUserDTOs = new ArrayList<>();
+
+        for (Friend friend : friends) {
+            friendUserDTOs.add(new FriendUserDTO() {
+                @Override
+                public String getUserUsername() {
+                    return friend.getUsername();
+                }
+
+                @Override
+                public String getUserName() {
+                    return friend.getFriend();
+                }
+            });
+        }
+
+        return friendUserDTOs;
     }
 
 }

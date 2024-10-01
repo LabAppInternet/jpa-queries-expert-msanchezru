@@ -80,7 +80,8 @@ public class FriendIntegrationTest {
 
         ResponseEntity<String> response = restTemplate.postForEntity("/api/users/friends", request, String.class);
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        Assertions.assertThat(response.getBody()).contains("must not be empty");
+        //Assertions.assertThat(response.getBody()).contains("must not be empty");
+        Assertions.assertThat(response.getBody()).contains("no debe estar vacío");
     }
 
     @Test
